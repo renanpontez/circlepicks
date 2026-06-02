@@ -1,8 +1,16 @@
-import { redirect } from 'next/navigation';
-import { routes, type Locale } from '@/lib/routes';
-import { getLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 
-export default async function AdminPage() {
-  const locale = await getLocale() as Locale;
-  redirect(routes.app.admin.experiences(locale));
+export default async function AdminDashboardPage() {
+  const t = await getTranslations('admin');
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-dark-grey mb-6">
+        {t('dashboard.title')}
+      </h1>
+      <p className="text-medium-grey">
+        {t('dashboard.description')}
+      </p>
+    </div>
+  );
 }
