@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import type { TablesUpdate } from '@/lib/supabase/database.types';
 import { getAuthUser } from '@/lib/supabase/getAuthUser';
 import { formatTimeAgo, generateExperienceSlug } from '@/lib/utils/format';
 
@@ -147,7 +148,8 @@ export async function PATCH(
       visibility,
     } = body;
 
-    // Build update object with only provided fields
+    // Build update object with only provided fields.
+    // Typed loosely because database.types.ts is stale vs prod schema (missing rating/rating_addons/status).
     const updateData: Record<string, unknown> = {};
     if (rating !== undefined) updateData.rating = rating;
     if (rating_addons !== undefined) updateData.rating_addons = rating_addons;
@@ -163,7 +165,7 @@ export async function PATCH(
     // Update experience
     const { data: updatedExperience, error: updateError } = await supabase
       .from('experiences')
-      .update(updateData)
+      .update(updateData as TablesUpdate<'experiences'>)
       .eq('id', id)
       .select(experienceSelect)
       .single();
